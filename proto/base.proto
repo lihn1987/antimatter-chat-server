@@ -1,0 +1,9 @@
+syntax = "proto3";
+package net;
+message Ping {
+    uint32 version = 1;
+}
+ 
+message Pong {
+    uint32 version = 1;
+}
