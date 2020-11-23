@@ -2,8 +2,10 @@ syntax = "proto3";
 package net;
 message Ping {
     uint32 version = 1;
+    uint64 unixTime = 2;
 }
  
 message Pong {
     uint32 version = 1;
+    uint64 unixTime = 2;
 }

@@ -53,7 +53,7 @@ std::shared_ptr<::google::protobuf::Message> Msg::DecodeString2Protobuf(std::str
     switch(type){
     case MSG_PING:
         rtn = std::shared_ptr<net::Ping>(new net::Ping());
-        if(!rtn->ParseFromString(msg.substr(8, len-8))){
+        if(!rtn->ParseFromString(msg.substr(sizeof(len)+sizeof(type), len - sizeof(type)))){
             msg.erase(0, sizeof(len)+len);
             return std::shared_ptr<::google::protobuf::Message>();
         }
@@ -61,7 +61,7 @@ std::shared_ptr<::google::protobuf::Message> Msg::DecodeString2Protobuf(std::str
         break;
     case MSG_PONG:
         rtn = std::shared_ptr<net::Pong>(new net::Pong());
-        if(!rtn->ParseFromString(msg.substr(8, len-8))){
+        if(!rtn->ParseFromString(msg.substr(sizeof(len)+sizeof(type), len - sizeof(type)))){
             msg.erase(0, sizeof(len)+len);
             return std::shared_ptr<::google::protobuf::Message>();
         }

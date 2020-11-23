@@ -80,12 +80,13 @@ void ClientItem::OnRead(const boost::system::error_code& error, std::size_t byte
     }else{
         LogDebug("Readed "<<bytes_transferred<<" bytes")
         buffer_read.append(buffer_read_tmp, 0, bytes_transferred);
-        while(auto msg = Msg::DecodeString2Protobuf(buffer_read)){
+        std::shared_ptr<::google::protobuf::Message> msg;
+        while(msg = Msg::DecodeString2Protobuf(buffer_read)){
             if(on_read) on_read(shared_from_this(), msg);
         }
         //if(on_read) on_read(shared_from_this(), std::string(buffer_read_tmp, 0, bytes_transferred));
         socket.async_read_some(boost::asio::buffer(buffer_read_tmp), std::bind(&ClientItem::OnRead, shared_from_this(),  std::placeholders::_1, std::placeholders::_2));
-        LogDebug("Readed "<<bytes_transferred<<" bytes");
+        LogDebug("Readed "<<bytes_transferred<<","<<" bytes");
     }
 }
 

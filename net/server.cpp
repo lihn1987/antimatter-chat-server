@@ -5,12 +5,11 @@
 #include "log/log.hpp"
 #include "msg.hpp"
 #include "base.pb.h"
-Server::Server(boost::asio::io_context& ioc, std::shared_ptr<Config> config_in,std::function<void(std::shared_ptr<ClientItem>, std::shared_ptr<::google::protobuf::Message>)> on_read_cb):
-    config(config_in),
+#include "../config/config.hpp"
+Server::Server(boost::asio::io_context& ioc):
     ioc(ioc),
     work(ioc),
-    acceptor(ioc, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), config->net_config->lession_port), false),
-    on_read(on_read_cb){
+    acceptor(ioc, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), GetConfig()->lession_port), false){
     LogDebug("Server create"<<this);
 }
 
@@ -62,11 +61,14 @@ void Server::OnAccept(std::shared_ptr<ClientItem> new_item, const boost::system:
 }
 void Server::OnReadMsg(std::shared_ptr<ClientItem> new_item,
       std::shared_ptr<::google::protobuf::Message> msg){
-    if(on_read)on_read(new_item, msg);
+    
     if(msg->GetTypeName() == "net.Ping"){
+        LogInfo("Readed msg <net.Pint>");
         std::shared_ptr<net::Pong> pong = std::shared_ptr<net::Pong>(new net::Pong());
         pong->set_version(0x00000001);
         new_item->Write(pong);
+    }else{
+        LogInfo("Readed msg <unknown>");
     }
     
 }
