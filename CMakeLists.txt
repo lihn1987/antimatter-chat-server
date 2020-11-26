@@ -22,6 +22,14 @@ aux_source_directory(./net amt_str)
 aux_source_directory(./log amt_str)
 aux_source_directory(./config amt_str)
 aux_source_directory(./tool amt_str)
+aux_source_directory(./cipher amt_str)
 
-add_executable(encrypted-chat-server ${amt_str} ${PROTO_SRCS})
+add_executable(
+    encrypted-chat-server 
+    ${amt_str} 
+    ${PROTO_SRCS}
+    ./cipher/secp256k1/secp256k1.c
+    ./cipher/secp256k1/bench_ecdh.c
+    ./cipher/aes/aes.cpp
+    ./cipher/blake2/blake2b.cc)
 target_link_libraries(encrypted-chat-server PRIVATE  ${Boost_LIBRARIES} ${PROTOBUF_LIBRARIES}) 
