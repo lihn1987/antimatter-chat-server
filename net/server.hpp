@@ -23,6 +23,12 @@ private:
     void OnReadMsg(std::shared_ptr<ClientItem> new_item,
       std::shared_ptr<::google::protobuf::Message> msg);
     void OnError(std::shared_ptr<ClientItem> item);
+private://message process
+    bool ProcessMessage(std::shared_ptr<ClientItem> new_item, std::shared_ptr<::google::protobuf::Message> msg);
+    bool ProcessPing(std::shared_ptr<ClientItem> new_item, std::shared_ptr<::google::protobuf::Message> _msg);
+    bool ProcessLogin(std::shared_ptr<ClientItem> new_item, std::shared_ptr<::google::protobuf::Message> _msg);
+private:
+    uint64_t GetTimeStamp();
 private:
     boost::asio::io_context& ioc;
     boost::asio::io_service::work work;

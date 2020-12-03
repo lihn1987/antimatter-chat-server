@@ -7,6 +7,8 @@
 #include "net/server.hpp"
 #include "net/client_item.hpp"
 
+#include <boost/date_time/posix_time/ptime.hpp>
+#include <boost/date_time/time_duration.hpp>
 int main(int argc, char* argv[]){
     auto config = Config::GetInstance(argc, argv);
     boost::asio::io_context ioc;

@@ -2,39 +2,39 @@ syntax = "proto3";
 package net;
 message Ping {
     uint32 version = 1;
-    uint64 unixTime = 2;
+    uint64 timeStamp = 2;
     uint32 index = 3;
 }
  
 message Pong {
     uint32 version = 1;
-    uint64 unixTime = 2;
+    uint64 timeStamp = 2;
     uint32 index = 3;
 }
 
 message LoginRequest {
-    uint8[65] publicKey = 1;
-    uint64 unixTime = 2;
+    bytes  publicKey = 1;
+    uint64 timeStamp = 2;
     uint32 index = 3;
-    uint8[64] sign = 4;
+    bytes  sign = 4;
 }
 
 message LoginResponse {
-    uint64 unixTime = 1;
+    uint64 timeStamp = 1;
     uint32 index = 2;
     uint32 result = 3;
 }
 
 message TextMessageRequest{
-    uint8[65] to = 1;
-    bytes content = 2;
-    uint64 unixTime = 3;
+    bytes  to = 1;
+    bytes  content = 2;
+    uint64 timeStamp = 3;
     uint32 index = 4;
-    uint8[64] sign = 5;
+    bytes  sign = 5;
 }
 
 message TextMessageresponse{
-    uint64 unixTime = 1;
+    uint64 timeStamp = 1;
     uint32 index = 2;
     uint32 result = 3;
 }
