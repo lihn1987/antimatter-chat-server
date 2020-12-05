@@ -7,6 +7,8 @@
 #include "msg.hpp"
 #include "../config/config.hpp"
 #include "base.pb.h"
+#include "../cipher/string_tools.h"
+#include "../cipher/key_tool.h"
 
 Server::Server(boost::asio::io_context& ioc):
     ioc(ioc),
@@ -103,6 +105,19 @@ bool Server::ProcessPing(std::shared_ptr<ClientItem> new_item, std::shared_ptr<:
 }
 
 bool Server::ProcessLogin(std::shared_ptr<ClientItem> new_item, std::shared_ptr<::google::protobuf::Message> _msg){
+    std::shared_ptr<net::LoginRequest> msg = std::dynamic_pointer_cast<net::LoginRequest>(_msg);
+    
+    std::string publickey = msg->publickey();
+    uint64_t time_stamp = msg->timestamp();
+    uint32_t index = msg->index();
+    std::string for_sign = msg->publickey()+std::string((char*)&(time_stamp), sizeof(time_stamp))+std::string((char*)&index, sizeof(index));
+    bool validate  = SignIsValidate(for_sign, publickey, msg->sign());
+
+    LogInfo("public_key is:"<<Byte2HexAsc(msg->publickey()));
+    LogInfo("time_stamp is:"<<time_stamp);
+    LogInfo("index is:"<<index);
+    LogInfo("for_sign is:"<<Byte2HexAsc(for_sign));
+    LogInfo("validate is:"<<validate); 
     return true;
 }
 

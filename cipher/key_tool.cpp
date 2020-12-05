@@ -172,6 +172,10 @@ bool SignIsValidate(const uint8_t* buf, size_t length, const std::string& pub_ke
     return result;
 }
 
+bool SignIsValidate(const std::string& buf, const std::string& pub_key, const std::string& sign){
+    return SignIsValidate((const uint8_t*)buf.data(), buf.length(), pub_key, sign);
+}
+
 std::string CreateAesIVKey()
 {
     return CreateCustomRandom(AES_BLOCKSIZE);

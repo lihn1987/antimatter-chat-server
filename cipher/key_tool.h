@@ -56,6 +56,15 @@ std::string GetEcdhKey(const std::string& pub_key, const std::string& pri_key);
 bool SignIsValidate(const uint8_t* buf, size_t length, const std::string& pub_key, const std::string& sign);
 
 /**
+ * @brief uses the public key to determine whether the signature is correct
+ * @param buf signed data 
+ * @param pub_key The public key (binary) of the signature to be verified
+ * @param sign The signature to be verified (binary)
+ * @return is the signature correct
+ */
+bool SignIsValidate(const std::string& buf, const std::string& pub_key, const std::string& sign);
+
+/**
  * @brief creates an AES IV vector
  * @return IV vector (binary)
  */
