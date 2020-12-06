@@ -3,16 +3,40 @@
 
 std::unordered_map<std::string, int> Msg::msgtype_string2int_map;
 std::unordered_map<int, std::string> Msg::msgtype_int2string_map;
+std::unordered_map<int, std::function<std::shared_ptr<::google::protobuf::Message>()>> Msg::msgtype_int2func_map;
+#define CreateInt2Func(arg) \
+{\
+    MSG_##arg,\
+    std::bind([]()->std::shared_ptr<::google::protobuf::Message>{\
+            return std::shared_ptr<net::arg>(new net::arg());\
+        })\
+}
+
+
 
 inline void Msg::InitMsgType(){
     if(msgtype_string2int_map.size())return;
     msgtype_string2int_map = {
-        {"net.Ping", MSG_PING},
-        {"net.Pong", MSG_PONG}
+        {"net.Ping", MSG_Ping},
+        {"net.Pong", MSG_Pong},
+        {"net.LoginRequest", MSG_LoginRequest},
+        {"net.LoginResponse", MSG_LoginResponse},
+        {"net.TextMessageRequest", MSG_TextMessageRequest},
+        {"net.TextMessageresponse", MSG_TextMessageresponse}
     };
     for(auto item : msgtype_string2int_map){
         msgtype_int2string_map[item.second] = item.first;
     }
+
+    msgtype_int2func_map = {
+        CreateInt2Func(Ping),
+        CreateInt2Func(Pong),
+        CreateInt2Func(LoginRequest),
+        CreateInt2Func(LoginResponse),
+        CreateInt2Func(TextMessageRequest),
+        CreateInt2Func(TextMessageresponse)
+    };
+         
 }
 
 std::string Msg::EncodeProtobuf2String(std::shared_ptr<::google::protobuf::Message> msg){
@@ -50,26 +74,15 @@ std::shared_ptr<::google::protobuf::Message> Msg::DecodeString2Protobuf(std::str
         return std::shared_ptr<::google::protobuf::Message>();
     }
     std::shared_ptr<::google::protobuf::Message> rtn;
-    switch(type){
-    case MSG_PING:
-        rtn = std::shared_ptr<net::Ping>(new net::Ping());
+
+    if(msgtype_int2func_map.find(type) != msgtype_int2func_map.end()){
+        rtn = msgtype_int2func_map[type]();
         if(!rtn->ParseFromString(msg.substr(sizeof(len)+sizeof(type), len - sizeof(type)))){
             msg.erase(0, sizeof(len)+len);
             return std::shared_ptr<::google::protobuf::Message>();
         }
-        msg.erase(0, sizeof(len)+len);
-        break;
-    case MSG_PONG:
-        rtn = std::shared_ptr<net::Pong>(new net::Pong());
-        if(!rtn->ParseFromString(msg.substr(sizeof(len)+sizeof(type), len - sizeof(type)))){
-            msg.erase(0, sizeof(len)+len);
-            return std::shared_ptr<::google::protobuf::Message>();
-        }
-        msg.erase(0, sizeof(len)+len);
-        break;
-    default:
-        break;
     }
+    msg.erase(0, sizeof(len)+len);
     return rtn;
     
     
